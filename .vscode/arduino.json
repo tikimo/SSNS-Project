@@ -1,3 +1,5 @@
 {
-    "board": "arduino:avr:uno"
+    "board": "arduino:avr:uno",
+    "port": "/dev/cu.usbmodem143301",
+    "sketch": "Basestation/basestation.ino"
 }

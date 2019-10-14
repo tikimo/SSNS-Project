@@ -1,15 +1,23 @@
+#include <stdio.h>
+
 void setup() {
-  // put your setup code here, to run once:
-
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(9600);
 }
 
+// the loop function runs over and over again forever
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on 
+  sendTelemetry("Led", "ON");
+  Serial.println("asdad");
+  delay(100);                       // wait for half a second
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off 
+  delay(100);                       // wait for half a second
 }
-
 
 // Sends the telemetry to Serial with nice logging
-void sendTelemetry(string key, string value) {
-  Serial.print(messageLog);
+void sendTelemetry(String key, String value) {
+  String messageLog = (String) "[" + millis() + "] " + key + ": " + value;
+  Serial.println(messageLog);
 }
