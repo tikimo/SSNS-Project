@@ -17,6 +17,7 @@ class MessageFormat {
   struct Telemetry {
     String key;
     float value;
+    String unit;
   };
 };
 
@@ -31,7 +32,7 @@ MessageFormat::DHT_Message readSensor(DHT dht) {
 }
 
 void sendTelemetry(MessageFormat::Telemetry t) {
-  Serial.println((String) t.key + ": " + t.value);
+  Serial.println((String) t.key + ": " + t.value + " " + t.unit);
 
   // TODO implement RF logic
 }
@@ -53,14 +54,16 @@ void loop() {
   // Send humidity data as telemetry
   MessageFormat::Telemetry humidityTelemetry = {
     "Humidity",
-    sensorData.humidity
+    sensorData.humidity,
+    "%"
   };
   sendTelemetry(humidityTelemetry);
 
   // Send temperature data as telemetry
   MessageFormat::Telemetry temperatureTelemetry = {
     "Temperature",
-    sensorData.temperature
+    sensorData.temperature,
+    "°C"
   };
   sendTelemetry(temperatureTelemetry);
 }

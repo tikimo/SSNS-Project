@@ -11,11 +11,12 @@ class MessageFormat {
   struct Telemetry {
     String key;
     float value;
+    String unit;
   };
 };
 
 void sendTelemetry(MessageFormat::Telemetry t) {
-  Serial.println((String) t.key + ": " + t.value);
+  Serial.println((String) t.key + ": " + t.value + " " + t.unit);
 
   // TODO implement RF logic
 }
@@ -32,7 +33,8 @@ void loop() {
 
   MessageFormat::Telemetry telemetry = {
     "Distance",
-    (float) distance
+    (float) distance,
+    "cm"
   };
   
   sendTelemetry(telemetry);
