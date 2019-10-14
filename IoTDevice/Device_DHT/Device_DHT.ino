@@ -1,15 +1,46 @@
 
 #include "DHT.h"
+#include <time.h>
+#include <stdio.h>
 
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
-
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 
 DHT dht(DHTPIN, DHTTYPE);
 
+class MessageFormat {
+  public:
+  struct DHT_Message {
+    float humidity;
+    float temperature;
+  };
+
+  struct Telemetry {
+    String key;
+    float value;
+    char* TimeStamp;
+  };
+};
+
+MessageFormat::DHT_Message readSensor(DHT dht) {
+  MessageFormat::DHT_Message data = {dht.readHumidity(), dht.readTemperature()};
+  if (isnan(data.humidity) || isnan(data.temperature)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return {0, 0};
+  } else {
+    return data;
+  }
+}
+
+void sendTelemetry(MessageFormat::Telemetry t) {
+  Serial.println((String) t.TimeStamp + "" + t.key + "" + t.value);
+
+  // TODO implement RF logic
+}
+
+
 void setup() {
   Serial.begin(9600);
-  Serial.println(F("DHTxx test!"));
 
   dht.begin();
 }
@@ -18,34 +49,27 @@ void loop() {
   // Wait a few seconds between measurements.
   delay(2000);
 
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-  float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  float f = dht.readTemperature(true);
+  // Read Sensor 
+  MessageFormat::DHT_Message sensorData = readSensor(dht);
 
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
-  }
+  // Get current time for TimeStamp
+  time_t rawtime;
+  struct tm * timeinfo;
 
-  // Compute heat index in Fahrenheit (the default)
-  float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  float hic = dht.computeHeatIndex(t, h, false);
+  time ( &rawtime );
+  timeinfo = localtime ( &rawtime );
 
-  Serial.print(F("Humidity: "));
-  Serial.print(h);
-  Serial.print(F("%  Temperature: "));
-  Serial.print(t);
-  Serial.print(F("°C "));
-  Serial.print(f);
-  Serial.print(F("°F  Heat index: "));
-  Serial.print(hic);
-  Serial.print(F("°C "));
-  Serial.print(hif);
-  Serial.println(F("°F"));
+  // Send read data as telemetry
+  MessageFormat::Telemetry telemetryData = {
+    "Humidity",
+    sensorData.humidity,
+    asctime (timeinfo)
+  };
+
+  sendTelemetry(telemetryData);
 }
+
+
+
+
+
