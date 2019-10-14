@@ -1,6 +1,5 @@
 
 #include "DHT.h"
-#include <time.h>
 #include <stdio.h>
 
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
@@ -18,7 +17,6 @@ class MessageFormat {
   struct Telemetry {
     String key;
     float value;
-    char* TimeStamp;
   };
 };
 
@@ -33,7 +31,7 @@ MessageFormat::DHT_Message readSensor(DHT dht) {
 }
 
 void sendTelemetry(MessageFormat::Telemetry t) {
-  Serial.println((String) t.TimeStamp + "" + t.key + "" + t.value);
+  Serial.println((String) t.key + ": " + t.value);
 
   // TODO implement RF logic
 }
@@ -52,21 +50,19 @@ void loop() {
   // Read Sensor 
   MessageFormat::DHT_Message sensorData = readSensor(dht);
 
-  // Get current time for TimeStamp
-  time_t rawtime;
-  struct tm * timeinfo;
-
-  time ( &rawtime );
-  timeinfo = localtime ( &rawtime );
-
-  // Send read data as telemetry
-  MessageFormat::Telemetry telemetryData = {
+  // Send humidity data as telemetry
+  MessageFormat::Telemetry humidityTelemetry = {
     "Humidity",
-    sensorData.humidity,
-    asctime (timeinfo)
+    sensorData.humidity
   };
+  sendTelemetry(humidityTelemetry);
 
-  sendTelemetry(telemetryData);
+  // Send temperature data as telemetry
+  MessageFormat::Telemetry temperatureTelemetry = {
+    "Temperature",
+    sensorData.temperature
+  };
+  sendTelemetry(temperatureTelemetry);
 }
 
 
