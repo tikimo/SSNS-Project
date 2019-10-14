@@ -1,5 +1,6 @@
 {
     "board": "arduino:avr:uno",
     "port": "/dev/cu.usbmodem143301",
-    "sketch": "Basestation/basestation.ino"
+    "sketch": "Basestation/basestation.ino",
+    "programmer": "AVRISP mkII"
 }
