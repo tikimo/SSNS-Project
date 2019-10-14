@@ -7,3 +7,9 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 }
+
+
+// Sends the telemetry to Serial with nice logging
+void sendTelemetry(string key, string value) {
+  Serial.print(messageLog);
+}
