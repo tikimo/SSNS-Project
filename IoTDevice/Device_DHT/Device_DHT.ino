@@ -11,7 +11,7 @@ DHT dht(DHTPIN, DHTTYPE);
 // Xbee init
 XBee xbee = XBee();
 // Payload is {hwid, t|h|p, value, value, unit}
-uint8_t payload[] = {0,0,0,0,0};
+uint8_t payload[5] = {0,0,0,0,0};
 // SH + SL Address of receiving XBee
 XBeeAddress64 addr64 = XBeeAddress64(0x0013a200, 0x414ea696);
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
@@ -25,9 +25,9 @@ class MessageFormat {
   };
 
   struct Telemetry {
-    String key;
+    char key;
     float value;
-    String unit;
+    char unit;
   };
 };
 
@@ -47,8 +47,8 @@ void sendTelemetry(MessageFormat::Telemetry t) {
   // Payload edit
   payload[0] = 1; // HWid
   payload[1] = t.key; 
-  payload[2] = t.value / 10;
-  payload[3] = t.value % 10;
+  payload[2] = (int) t.value / 10;
+  payload[3] = (int) t.value % 10;
   payload[4] = t.unit;
 
   // RF Logic
@@ -72,17 +72,17 @@ void loop() {
 
   // Send humidity data as telemetry
   MessageFormat::Telemetry humidityTelemetry = {
-    "h",
+    'h',
     sensorData.humidity,
-    "%"
+    '%'
   };
   sendTelemetry(humidityTelemetry);
 
   // Send temperature data as telemetry
   MessageFormat::Telemetry temperatureTelemetry = {
-    "t",
+    't',
     sensorData.temperature,
-    "C"
+    'C'
   };
   sendTelemetry(temperatureTelemetry);
 }
