@@ -7,7 +7,7 @@ const int echoPin = 5;
 
 // Xbee init
 XBee xbee = XBee();
-// Payload is {hwid, t|h|p, value (255), unit}
+// Payload is {hwid, t|h|p, tens, ones, unit}
 unsigned char payload[5] = {0,0,0,0,0};
 // SH + SL Address of receiving XBee
 XBeeAddress64 addr64 = XBeeAddress64(0x0013a200, 0x414ea696);
