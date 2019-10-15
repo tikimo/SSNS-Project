@@ -1,6 +1,5 @@
 
 #include "DHT.h"
-#include <XBee.h>
 #include <stdio.h>
 
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
@@ -8,6 +7,7 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
+<<<<<<< HEAD
 // Xbee init
 XBee xbee = XBee();
 // Payload is {hwid, t|h|p, value (255), unit}
@@ -17,6 +17,8 @@ XBeeAddress64 addr64 = XBeeAddress64(0x0013a200, 0x414ea696);
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 
 
+=======
+>>>>>>> 2c01fe3050b268901c1ba0d8a74868435b893e37
 class MessageFormat {
   public:
   struct DHT_Message {
@@ -61,11 +63,11 @@ void sendTelemetry(MessageFormat::Telemetry t) {
   xbee.send(zbTx);
 }
 
+
 void setup() {
   Serial.begin(9600);
 
   dht.begin();
-  xbee.setSerial(Serial);
 }
 
 void loop() {
@@ -77,7 +79,11 @@ void loop() {
 
   // Send humidity data as telemetry
   MessageFormat::Telemetry humidityTelemetry = {
+<<<<<<< HEAD
     'h',
+=======
+    "Humidity",
+>>>>>>> 2c01fe3050b268901c1ba0d8a74868435b893e37
     sensorData.humidity,
     '%'
   };
@@ -85,9 +91,15 @@ void loop() {
 
   // Send temperature data as telemetry
   MessageFormat::Telemetry temperatureTelemetry = {
+<<<<<<< HEAD
     't',
     sensorData.temperature,
     'C'
+=======
+    "Temperature",
+    sensorData.temperature,
+    "°C"
+>>>>>>> 2c01fe3050b268901c1ba0d8a74868435b893e37
   };
   sendTelemetry(temperatureTelemetry);
 }
