@@ -1,6 +1,18 @@
+
+#include <XBee.h>
+
 // defines pins numbers
 const int trigPin = 6;
 const int echoPin = 5;
+
+// Xbee init
+XBee xbee = XBee();
+// Payload is {hwid, t|h|p, value (255), unit}
+unsigned char payload[5] = {0,0,0,0,0};
+// SH + SL Address of receiving XBee
+XBeeAddress64 addr64 = XBeeAddress64(0x0013a200, 0x414ea696);
+ZBTxStatusResponse txStatus = ZBTxStatusResponse();
+
 
 // defines variables
 long duration;
@@ -9,16 +21,30 @@ int distance;
 class MessageFormat {
   public:
   struct Telemetry {
-    String key;
+    char key;
     float value;
-    String unit;
+    char unit;
   };
 };
 
 void sendTelemetry(MessageFormat::Telemetry t) {
   Serial.println((String) t.key + ": " + t.value + " " + t.unit);
 
-  // TODO implement RF logic
+  t.value = t.value > 99 ? 99 : t.value;
+
+  int first_digit = ((int) t.value) / 10;
+  int second_digit = ((int) t.value) % 10;
+
+  // Payload edit
+  payload[0] = '2'; // HWid
+  payload[1] = t.key;
+  payload[2] = '0' + first_digit;
+  payload[3] = '0' + second_digit;
+  payload[4] = t.unit;
+
+  // RF Logic
+  ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
+  xbee.send(zbTx);
 }
 
 void setup() {
@@ -32,9 +58,9 @@ void loop() {
   int distance = getDistanceInCm();
 
   MessageFormat::Telemetry telemetry = {
-    "Distance",
+    'p',
     (float) distance,
-    "cm"
+    'c'
   };
   
   sendTelemetry(telemetry);
