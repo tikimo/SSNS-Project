@@ -10,8 +10,8 @@ DHT dht(DHTPIN, DHTTYPE);
 
 // Xbee init
 XBee xbee = XBee();
-// Payload is {hwid, t|h|p, value, value, unit}
-uint8_t payload[5] = {0,0,0,0,0};
+// Payload is {hwid, t|h|p, value (255), unit}
+unsigned char payload[5] = {0,0,0,0,0};
 // SH + SL Address of receiving XBee
 XBeeAddress64 addr64 = XBeeAddress64(0x0013a200, 0x414ea696);
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
@@ -44,11 +44,16 @@ MessageFormat::DHT_Message readSensor(DHT dht) {
 void sendTelemetry(MessageFormat::Telemetry t) {
   Serial.println((String) t.key + ": " + t.value + " " + t.unit);
 
+  int first_digit = ((int) t.value) / 10;
+  int second_digit = ((int) t.value) % 10;
+
+
+
   // Payload edit
-  payload[0] = 1; // HWid
-  payload[1] = t.key; 
-  payload[2] = (int) t.value / 10;
-  payload[3] = (int) t.value % 10;
+  payload[0] = '4'; // HWid
+  payload[1] = t.key;
+  payload[2] = '0' + first_digit;
+  payload[3] = '0' + second_digit;
   payload[4] = t.unit;
 
   // RF Logic
