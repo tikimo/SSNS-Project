@@ -10,7 +10,7 @@ void loop() {
 String sample;
   xbee.readPacket(); 
     if (xbee.getResponse().isAvailable()) {
-      Serial.println(xbee.getResponse().getApiId());
+      //Serial.println(xbee.getResponse().getApiId());
       if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
         xbee.getResponse().getZBRxResponse(rx);
         for (int i = 0; i < rx.getDataLength(); i++) {

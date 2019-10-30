@@ -68,7 +68,7 @@ void setup() {
 
 void loop() {
   // Wait a few seconds between measurements.
-  delay(2000);
+  delay(20000);
 
   // Read Sensor 
   MessageFormat::DHT_Message sensorData = readSensor(dht);
@@ -89,8 +89,3 @@ void loop() {
   };
   sendTelemetry(temperatureTelemetry);
 }
-
-
-
-
-
